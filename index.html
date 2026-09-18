@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unofficial Memeory</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ===== Navigation ===== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,10,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1f1f1f;
+  padding: 0 24px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 20px; font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #f0f0f0;
+}
+.nav-title .title-zh {
+  font-size: 12px; font-weight: 400; opacity: 0.5;
+  margin-left: 8px; letter-spacing: 1px;
+}
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a {
+  font-size: 13px; font-weight: 400; color: #888;
+  transition: color 0.2s; letter-spacing: 0.3px;
+}
+.nav-links a:hover, .nav-links a.active { color: #f0f0f0; }
+.nav-menu-btn { display: none; }
+
+/* ===== Hero / Cover ===== */
+.hero {
+  margin-top: 60px;
+  width: 100%; height: 80vh; min-height: 480px;
+  background: #111;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid #1f1f1f;
+}
+.hero img {
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: center;
+  filter: brightness(0.55) contrast(1.05);
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.1) 40%, rgba(10,10,10,0.5) 100%);
+}
+.hero-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(36px, 7vw, 72px);
+  font-weight: 700;
+  color: #f5f5f5;
+  letter-spacing: 4px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.6);
+  margin-bottom: 8px;
+}
+.hero-title-zh {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 700;
+  color: rgba(240,240,240,0.75);
+  letter-spacing: 6px;
+  margin-bottom: 16px;
+}
+.hero-subtitle {
+  font-size: 13px;
+  color: #c4a47c;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+/* ===== Intro / 卷首语 ===== */
+.intro {
+  max-width: 680px; margin: 0 auto;
+  padding: 80px 24px 60px;
+  text-align: center;
+}
+.intro-label {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: #c4a47c; margin-bottom: 28px;
+}
+.intro-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px; line-height: 2;
+  color: #bbb; text-align: center;
+  font-weight: 400;
+}
+.intro-text p { margin-bottom: 18px; }
+.intro-text p:last-child { margin-bottom: 0; }
+.intro-text em { font-style: italic; color: #999; }
+.intro-divider {
+  width: 40px; height: 1px; background: #333;
+  margin: 36px auto;
+}
+.intro-text-zh {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px; line-height: 2;
+  color: #777; text-align: center;
+  font-weight: 400;
+}
+.intro-text-zh p { margin-bottom: 12px; }
+.intro-text-zh p:last-child { margin-bottom: 0; }
+
+/* ===== Section Common ===== */
+.section { padding: 60px 0 40px; }
+.section-header {
+  max-width: 1200px; margin: 0 auto 32px; padding: 0 24px;
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.section-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 28px; font-weight: 700; letter-spacing: 1px;
+  color: #f0f0f0;
+}
+.section-title-en {
+  font-size: 12px; color: #c4a47c; letter-spacing: 2px;
+  text-transform: uppercase; margin-left: 12px; font-weight: 300;
+}
+.section-count { font-size: 12px; color: #7d8fa3; }
+
+/* ===== Featured Horizontal Scroll ===== */
+.featured-wrap {
+  position: relative; overflow: hidden;
+}
+.featured-scroll {
+  display: flex; gap: 16px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 24px 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; scrollbar-color: #333 transparent;
+}
+.featured-scroll::-webkit-scrollbar { height: 4px; }
+.featured-scroll::-webkit-scrollbar-track { background: transparent; }
+.featured-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+.featured-item {
+  flex: 0 0 auto; width: 340px; height: 420px;
+  scroll-snap-align: start; position: relative;
+  overflow: hidden; border-radius: 2px;
+  cursor: pointer; background: #1a1a1a;
+}
+.featured-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.featured-item:hover img { transform: scale(1.04); }
+.featured-item .feat-tag {
+  position: absolute; bottom: 16px; left: 16px;
+  background: rgba(0,0,0,0.6); color: #fff;
+  font-size: 11px; padding: 4px 10px; border-radius: 2px;
+  letter-spacing: 1px; backdrop-filter: blur(4px);
+}
+
+/* ===== Category Tabs ===== */
+.cat-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  max-width: 1200px; margin: 0 auto 32px; padding: 0 24px;
+}
+.cat-tab {
+  padding: 8px 20px; border: 1px solid #333;
+  border-radius: 20px; font-size: 13px; color: #888;
+  transition: all 0.2s; background: #0a0a0a;
+}
+.cat-tab:hover { border-color: #666; color: #ccc; }
+.cat-tab.active {
+  background: #c4a47c; color: #0a0a0a; border-color: #c4a47c;
+}
+.cat-tab .tab-zh {
+  font-size: 10px; opacity: 0.55; margin-left: 5px; font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Photo Grid ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.grid-item {
+  position: relative; aspect-ratio: 1;
+  overflow: hidden; cursor: pointer; background: #1a1a1a;
+}
+.grid-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: opacity 0.3s, transform 0.4s ease;
+}
+.grid-item:hover img { opacity: 0.75; transform: scale(1.03); }
+.grid-item.hidden { display: none; }
+
+/* ===== Category Section Headers ===== */
+.cat-section {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.cat-section-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px; font-weight: 700;
+  padding: 48px 0 20px;
+  border-bottom: 1px solid #1f1f1f;
+  margin-bottom: 4px;
+  display: flex; align-items: baseline; gap: 12px;
+  color: #f0f0f0;
+}
+.cat-section-title .en {
+  font-size: 11px; color: #c4a47c; letter-spacing: 2px;
+  text-transform: uppercase; font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 300;
+}
+.cat-section-title .count {
+  font-size: 12px; color: #7d8fa3; margin-left: auto;
+  font-family: 'Noto Sans SC', sans-serif; font-weight: 300;
+}
+.cat-section-subtitle {
+  font-size: 13px; color: #7d8fa3; font-style: italic;
+  letter-spacing: 0.5px; margin-top: -14px; margin-bottom: 20px;
+  line-height: 1.6; font-weight: 300;
+}
+
+/* ===== Author / About Section ===== */
+.author-section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 24px 60px;
+  text-align: center;
+}
+.author-label {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: #c4a47c; margin-bottom: 32px;
+}
+.author-photo {
+  width: 100%; max-width: 960px; margin: 0 auto 36px;
+  border-radius: 2px; overflow: hidden;
+  border: 1px solid #1f1f1f;
+  background: #111;
+}
+.author-photo img {
+  width: 100%; height: auto; display: block;
+  filter: contrast(1.05);
+}
+.author-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 26px; font-weight: 600;
+  margin-bottom: 8px; letter-spacing: 1px;
+  color: #f0f0f0;
+}
+.author-name .name-zh {
+  font-size: 16px; font-weight: 400; opacity: 0.55;
+  margin-left: 10px; letter-spacing: 2px;
+}
+.author-role {
+  font-size: 13px; color: #7d8fa3; margin-bottom: 32px;
+  letter-spacing: 2px;
+}
+.author-bio {
+  font-size: 14px; line-height: 1.9; color: #aaa;
+  max-width: 420px; margin: 0 auto;
+  text-align: center;
+}
+.author-bio p { margin-bottom: 0; }
+.author-bio-divider {
+  width: 30px; height: 1px; background: #2a2a2a;
+  margin: 24px auto;
+}
+.author-bio-zh {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px; line-height: 2;
+  color: #666; text-align: center;
+  font-weight: 400;
+  max-width: 420px; margin: 0 auto;
+}
+.author-bio-zh p { margin: 0; }
+.author-contact {
+  text-align: center; margin-top: 28px;
+}
+.author-contact-row {
+  margin-bottom: 10px;
+}
+.author-contact-label {
+  display: block; font-size: 11px; letter-spacing: 3px;
+  color: #555; text-transform: uppercase; margin-bottom: 6px;
+}
+.author-email {
+  font-size: 14px; color: #c4a47c; text-decoration: none;
+  letter-spacing: 0.5px; transition: opacity 0.3s;
+}
+.author-email:hover { opacity: 0.7; }
+.author-wechat {
+  font-size: 14px; color: #7d8fa3; letter-spacing: 0.5px;
+}
+.author-bio-placeholder {
+  border: 1px dashed #333; border-radius: 4px;
+  color: #555; font-size: 13px; letter-spacing: 1px;
+  padding: 28px; text-align: center;
+}
+
+/* ===== Lightbox ===== */
+.lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.96);
+  display: none; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.lightbox.active { display: flex; }
+.lightbox-img-wrap {
+  max-width: 90vw; max-height: 80vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.lightbox-img-wrap img {
+  max-width: 100%; max-height: 80vh; object-fit: contain;
+}
+.lightbox-close {
+  position: absolute; top: 20px; right: 24px;
+  color: #fff; font-size: 28px; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.7; transition: opacity 0.2s;
+}
+.lightbox-close:hover { opacity: 1; }
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  color: #fff; font-size: 36px; width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.5; transition: opacity 0.2s;
+}
+.lightbox-nav:hover { opacity: 1; }
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+.lightbox-caption {
+  color: rgba(255,255,255,0.5); font-size: 13px;
+  margin-top: 16px; letter-spacing: 0.5px;
+}
+.lb-caption-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px; color: rgba(255,255,255,0.85);
+  margin-bottom: 6px; line-height: 1.7;
+  max-width: 600px; margin-left: auto; margin-right: auto;
+}
+.lb-caption-meta {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.5px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  border-top: 1px solid #1f1f1f;
+  padding: 48px 24px 40px;
+  text-align: center;
+  margin-top: 80px;
+}
+.footer-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px; font-weight: 600; margin-bottom: 8px;
+  letter-spacing: 1px;
+  color: #f0f0f0;
+}
+.footer-title .title-zh {
+  font-size: 12px; font-weight: 400; opacity: 0.5;
+  margin-left: 8px; letter-spacing: 1px;
+}
+.footer-info {
+  font-size: 12px; color: #666; line-height: 1.8;
+  letter-spacing: 0.3px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-menu-btn { display: block; font-size: 20px; color: #ccc; }
+  .hero { height: 60vh; min-height: 360px; }
+  .hero-title { letter-spacing: 2px; }
+  .hero-subtitle { letter-spacing: 3px; font-size: 11px; }
+  .intro { padding: 48px 20px 40px; }
+  .intro-text { font-size: 14px; }
+  .section-title { font-size: 22px; }
+  .featured-item { width: 260px; height: 320px; }
+  .grid { gap: 2px; padding: 0 12px; }
+  .cat-tabs { padding: 0 16px; gap: 6px; }
+  .cat-tab { padding: 6px 14px; font-size: 12px; }
+  .lightbox-prev { left: 4px; }
+  .lightbox-next { right: 4px; }
+  .author-photo { max-width: 100%; }
+  .author-name { font-size: 22px; }
+}
+@media (max-width: 480px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav">
+  <a href="#top" class="nav-title">Unofficial Memeory <span class="title-zh">记忆的旁注</span></a>
+  <div class="nav-links">
+    <a href="#featured">Featured</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#about">About</a>
+  </div>
+  <button class="nav-menu-btn" aria-label="menu">&#9776;</button>
+</nav>
+
+<!-- ===== Hero / Cover ===== -->
+<section class="hero" id="top">
+  <img src="https://aka.doubaocdn.com/s/Y6gIKKmZKg" alt="Unofficial Memeory cover">
+  <div class="hero-overlay">
+    <h1 class="hero-title">Unofficial Memeory</h1>
+    <div class="hero-title-zh">记忆的旁注</div>
+    <div class="hero-subtitle">Urban Observations by Andrew Guo</div>
+  </div>
+</section>
+
+<!-- ===== Intro / 卷首语 ===== -->
+<section class="intro" id="preface">
+  <div class="intro-label">Preface</div>
+  <div class="intro-text">
+    <p>Photography, perhaps not about preserving what is meant to last, but is about finding what had never meant to be preserved.</p>
+    <p>An era is ephmeral. Buildings are replaced, faces disappear, gestures are forgotten, and ordinary places become unfamiliar. Yet for a brief moment, a torrent of light will fall on something that would otherwise pass unseen.</p>
+    <p>I press the shutter not to make the ordinary extraordinary. But to let it stay.</p>
+    <p>For what disappears from the frame may eventually disappear from memory.</p>
+  </div>
+  <div class="intro-divider"></div>
+  <div class="intro-text-zh">
+    <p>摄影，或许不是为了留住那些注定会留下的东西，而是去发现那些从未打算被保存的。</p>
+    <p>时代转瞬即逝。建筑被替换，面孔消失，手势被遗忘，再熟悉的地方也会变得陌生。但总有那么一瞬，光会倾泻在某个本会被忽略的事物上。</p>
+    <p>我按下快门，不是为了让平凡变得不凡。只是想让它留下来。</p>
+    <p>因为从画面里消失的，终有一天，也会从记忆里消失。</p>
+  </div>
+</section>
+
+<!-- ===== Featured Collection ===== -->
+<section class="section" id="featured">
+  <div class="section-header">
+    <div>
+      <span class="section-title">Featured</span>
+      <span class="section-title-en">精选集</span>
+    </div>
+    <span class="section-count" id="featured-count"></span>
+  </div>
+  <div class="featured-wrap">
+    <div class="featured-scroll" id="featured-scroll"></div>
+  </div>
+</section>
+
+<!-- ===== Gallery ===== -->
+<section class="section" id="gallery" style="padding-top:20px;">
+  <div class="section-header">
+    <div>
+      <span class="section-title">All Works</span>
+      <span class="section-title-en">全部作品</span>
+    </div>
+  </div>
+  <div class="cat-tabs" id="cat-tabs"></div>
+  <div id="gallery-container"></div>
+</section>
+
+<!-- ===== Author / About ===== -->
+<section class="author-section" id="about">
+  <div class="author-label">About the Photographer</div>
+  <div class="author-photo">
+    <img src="https://aka.doubaocdn.com/s/A6lohkGbya" alt="Andrew Guo - back, reading, front portrait">
+  </div>
+  <div class="author-name">Andrew Guo <span class="name-zh">郭谦尧</span></div>
+  <div class="author-role">18 &middot; HIGH SCHOOL STUDENT &middot; URBAN OBSERVER</div>
+  <div class="author-bio">
+    <p>A high school photographer archiving the unofficial memory of our era. Across Shanghai, Wuhan, Yunnan and New York, I chase candid human moments woven into layered urban spaces, alongside the raw serenity of untouched wilderness. My practice salvages unscripted, easily-missed fragments of everyday existence: the faint, ephemeral imprints ordinary people leave upon the cities they regard as belonging.</p>
+  </div>
+  <div class="author-bio-divider"></div>
+  <div class="author-bio-zh">
+    <p>高中生摄影师，为时代存档非正式记忆。</p>
+    <p>从上海、武汉、云南到纽约，我在层叠的城市空间里追逐真实的人文瞬间，也在未被惊扰的荒野中遇见原始的宁静。</p>
+    <p>我的镜头在打捞日常里那些未经编排、容易被错过的碎片 —— 普通人在他们视之为归属的城市中，留下的微弱而转瞬即逝的印记。</p>
+  </div>
+  <div class="author-contact">
+    <div class="author-contact-row">
+      <span class="author-contact-label">Email</span>
+      <a href="mailto:andrew-guoqy@outlook.com" class="author-email">andrew-guoqy@outlook.com</a>
+    </div>
+    <div class="author-contact-row">
+      <span class="author-contact-label">WeChat</span>
+      <span class="author-wechat">night_night_19</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Lightbox ===== -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lb-close">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lb-prev">&#8249;</button>
+  <div class="lightbox-img-wrap">
+    <img id="lb-img" src="" alt="">
+  </div>
+  <div class="lightbox-caption" id="lb-caption"></div>
+  <button class="lightbox-nav lightbox-next" id="lb-next">&#8250;</button>
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="footer-title">Unofficial Memeory <span class="title-zh">记忆的旁注</span></div>
+  <div class="footer-info">
+    Photography by an 18-year-old observer of the city<br>
+    Observations of urban environments and city life<br>
+    &copy; Unofficial Memeory - Andrew
+  </div>
+</footer>
+
+<script>
+// ===== Photo Data =====
+const categories = [
+  {
+    id: 'urban-texture',
+    name: '城市肌理',
+    nameEn: 'Urban Texture',
+    desc: '建筑、几何与天际线的抽象表达',
+    descEn: 'Where geometry speaks and facades tell forgotten stories.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/btl4h8FJuT', caption: 'Facades stack like chapters of an unwritten city.'},
+      {url: 'https://aka.doubaocdn.com/s/VPGqKT3sfP', caption: 'Geometry asserts itself where the eye expects chaos.'},
+      {url: 'https://aka.doubaocdn.com/s/rLDYajWxmG', caption: 'Lines converge, and the city finds its center.'},
+      {url: 'https://aka.doubaocdn.com/s/Ik6VW33R5x', caption: 'Concrete poetry in repeating verticals.'},
+      {url: 'https://aka.doubaocdn.com/s/q0jxjkXiFk', caption: 'Shadow carves order into the grid.'},
+      {url: 'https://aka.doubaocdn.com/s/fMUZlqK4LE', caption: 'From above, the city becomes abstract pattern.'},
+      {url: 'https://aka.doubaocdn.com/s/b4Mtc2N115', caption: 'Towers hold their silence against the haze.'},
+      {url: 'https://aka.doubaocdn.com/s/fhvSp8NGRJ', caption: 'A skyline reads like a sentence without punctuation.'},
+      {url: 'https://aka.doubaocdn.com/s/opNpRsBtMe', caption: 'Glass mirrors what the city refuses to see.'},
+      {url: 'https://aka.doubaocdn.com/s/7YEhcd5VWx', caption: 'Between two towers, a sliver of sky remains.'},
+      {url: 'https://aka.doubaocdn.com/s/E3g7UqUvtD', caption: 'A lone spire punctuates the horizontal calm.'},
+      {url: 'https://aka.doubaocdn.com/s/DWcnSR0Gny', caption: 'A pyramid crown claims its place in the skyline.'},
+      {url: 'https://aka.doubaocdn.com/s/Y6gIKKmZKg', caption: 'Bare branches draw calligraphy against stone.'},
+      {url: 'https://aka.doubaocdn.com/s/bw91rqgExl', caption: 'Beneath the overpass, light becomes architecture.'},
+      {url: 'https://aka.doubaocdn.com/s/ASuUTJS8mv', caption: 'The Oriental Pearl stands between two dark mirrors.'},
+      {url: 'https://aka.doubaocdn.com/s/8ummF2xG6D', caption: 'Stone and branch: two languages of silence.'},
+      {url: 'https://aka.doubaocdn.com/s/1YVJLf5jUY', caption: 'Tree shadows write calligraphy upon a weathered wall.'},
+      {url: 'https://aka.doubaocdn.com/s/3cDtx6sMAt', caption: 'Water scatters light against a grid of windows.'},
+      {url: 'https://aka.doubaocdn.com/s/LCqL9HOt5H', caption: 'Curved roof tiles repeat like waves frozen in clay.'},
+      {url: 'https://aka.doubaocdn.com/s/P5arzgtd4y', caption: 'A castle-like crown rises above an ordinary street, wrapped in scaffolding and planters.'}
+    ],
+    featured: [0, 4, 18, 11, 19]
+  },
+  {
+    id: 'street-stories',
+    name: '街头人间',
+    nameEn: 'Street Stories',
+    desc: '城市里的人，日常中的瞬间',
+    descEn: 'Fleeting moments, ordinary lives, faces the city forgets to remember.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/JkQPV7h87X', caption: 'A stranger passes, and the street keeps its secret.'},
+      {url: 'https://aka.doubaocdn.com/s/q8ZKDVuNyo', caption: 'Monochrome afternoon, where time slows to a walk.'},
+      {url: 'https://aka.doubaocdn.com/s/xqpay1eLSl', caption: 'Shadows stretch longer than the conversations.'},
+      {url: 'https://aka.doubaocdn.com/s/ra2xiWmIij', caption: 'An old doorway frames a life that continues inside.'},
+      {url: 'https://aka.doubaocdn.com/s/EUySwNbzkU', caption: 'The alley remembers what the city forgets.'},
+      {url: 'https://aka.doubaocdn.com/s/8QtImPWjVz', caption: 'Light falls on a face that was just passing through.'},
+      {url: 'https://aka.doubaocdn.com/s/GNsjLbKxvU', caption: 'Two paths cross, and neither looks back.'},
+      {url: 'https://aka.doubaocdn.com/s/xqyYBGYxqU', caption: 'The street holds its breath between footsteps.'},
+      {url: 'https://aka.doubaocdn.com/s/tKDlg4WDeV', caption: 'A figure in the distance, already becoming memory.'},
+      {url: 'https://aka.doubaocdn.com/s/xWSeUAcorV', caption: 'Warm light spills onto an otherwise ordinary corner.'},
+      {url: 'https://aka.doubaocdn.com/s/pYqd2VIgjk', caption: 'The city exhales, and people emerge.'},
+      {url: 'https://aka.doubaocdn.com/s/WfAPdbjcWS', caption: 'A moment held between two buildings.'},
+      {url: 'https://aka.doubaocdn.com/s/IpZUVRZ2Y6', caption: 'Silence has its own architecture in the old lanes.'},
+      {url: 'https://aka.doubaocdn.com/s/JZbPQHeySV', caption: 'Walking home, the light changes everything.'},
+      {url: 'https://aka.doubaocdn.com/s/D6XwMq9q7b', caption: 'A hand gesture tells a story the frame cannot hold.'},
+      {url: 'https://aka.doubaocdn.com/s/ZYAtPWVI14', caption: 'The street wears its history in cracked plaster.'},
+      {url: 'https://aka.doubaocdn.com/s/JEGMo4lMXW', caption: 'Dusk turns every passerby into a silhouette.'},
+      {url: 'https://aka.doubaocdn.com/s/rRH1eGUKCM', caption: 'A bicycle leans against time itself.'},
+      {url: 'https://aka.doubaocdn.com/s/qWtdmdpgfU', caption: 'The last warm light finds the last warm face.'},
+      {url: 'https://aka.doubaocdn.com/s/qR622UKVRx', caption: 'An intersection where four stories briefly meet.'},
+      {url: 'https://aka.doubaocdn.com/s/q57TeYCZGP', caption: 'The old city watches the new one walk past.'},
+      {url: 'https://aka.doubaocdn.com/s/2KIlwnE8u4', caption: 'A doorway opens onto a life we only glimpse.'},
+      {url: 'https://aka.doubaocdn.com/s/uVo32tDFJa', caption: 'Stone steps lead somewhere the frame cannot follow.'},
+      {url: 'https://aka.doubaocdn.com/s/UhTWOZ3Q88', caption: 'The alley narrows, and the past grows louder.'},
+      {url: 'https://aka.doubaocdn.com/s/VdQT7UosBt', caption: 'A figure turns a corner and becomes another city.'},
+      {url: 'https://aka.doubaocdn.com/s/dLI2VuoPkC', caption: 'Evening light gilds an ordinary street corner.'},
+      {url: 'https://aka.doubaocdn.com/s/0zn3bjdtH3', caption: 'A face in the crowd, held for a fraction of a second.'},
+      {url: 'https://aka.doubaocdn.com/s/JU844A5qCA', caption: 'The street empties, and its voice becomes echo.'},
+      {url: 'https://aka.doubaocdn.com/s/EE9VlpWuYT', caption: 'SUHE HAUS afternoon, where history sells coffee.'},
+      {url: 'https://aka.doubaocdn.com/s/Jvu9A2kPaR', caption: 'Through a broken wall, the old city still breathes.'},
+      {url: 'https://aka.doubaocdn.com/s/1Sv7bx28po', caption: 'Scooter headlights carve arcs through the old quarter.'},
+      {url: 'https://aka.doubaocdn.com/s/GewpOeACCA', caption: 'Long shadows stretch across the waterfront as evening approaches.'},
+      {url: 'https://aka.doubaocdn.com/s/RnenbcxpKV', caption: 'A couple lingers on the waterfront promenade as the city watches.'},
+      {url: 'https://aka.doubaocdn.com/s/qTULR55WON', caption: 'A photographer becomes the subject, framed by concentric circles of stone.'},
+      {url: 'https://aka.doubaocdn.com/s/RAVTVbSfm2', caption: 'On the court, a player spins the ball behind his back as spectators look on.'}
+    ],
+    featured: [33, 28, 30, 7, 12, 16]
+  },
+  {
+    id: 'cities-afar',
+    name: '远方的城',
+    nameEn: 'Cities Afar',
+    desc: '香港、纽约、武汉——旅途中的城市记忆',
+    descEn: 'Distant skylines, foreign streets, a borrowed sense of belonging.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/Gqu163AxNJ', caption: 'Somewhere else, the skyline has a different accent.'},
+      {url: 'https://aka.doubaocdn.com/s/TtgBkXvITq', caption: 'A distant city reveals itself through smog and wonder.'},
+      {url: 'https://aka.doubaocdn.com/s/5s8tejnLUV', caption: 'Travel is the art of being briefly anonymous.'},
+      {url: 'https://aka.doubaocdn.com/s/IrrncVb2Sx', caption: 'Foreign streets speak a language of light and stone.'},
+      {url: 'https://aka.doubaocdn.com/s/jP6kUVO1gc', caption: 'Hong Kong: vertical life in every frame.'},
+      {url: 'https://aka.doubaocdn.com/s/u9J4myWUD5', caption: 'A red taxi carries the city signature color.'},
+      {url: 'https://aka.doubaocdn.com/s/3hv1ToFyiL', caption: 'Neon signs stack like poems in a foreign tongue.'},
+      {url: 'https://aka.doubaocdn.com/s/Qkd9UY0DB0', caption: 'Golden hour inside a moving car, somewhere between here and there.'},
+      {url: 'https://aka.doubaocdn.com/s/a5SUhTxN56', caption: 'The city at dusk, seen through a stranger window.'},
+      {url: 'https://aka.doubaocdn.com/s/4J4nmNR3v3', caption: 'New York: concrete canyons and relentless light.'},
+      {url: 'https://aka.doubaocdn.com/s/MhYvZRrYXM', caption: 'Brooklyn Bridge, where the city suspends its disbelief.'},
+      {url: 'https://aka.doubaocdn.com/s/MfspjQCGWm', caption: 'Manhattan geometry, sharp and unapologetic.'},
+      {url: 'https://aka.doubaocdn.com/s/Q4V8xpJo5M', caption: 'A yellow cab becomes a comma in the city sentence.'},
+      {url: 'https://aka.doubaocdn.com/s/WFFTbi4S6j', caption: 'Steam rises, and the street becomes a stage.'},
+      {url: 'https://aka.doubaocdn.com/s/cOpltCGcM4', caption: 'Between two boroughs, the water holds the skyline.'},
+      {url: 'https://aka.doubaocdn.com/s/SWhT7QIKVr', caption: 'Wuhan: a city reinventing itself at the water edge.'},
+      {url: 'https://aka.doubaocdn.com/s/Flpk7oUF6u', caption: 'The Yangtze carries reflections of a changing skyline.'},
+      {url: 'https://aka.doubaocdn.com/s/Ww4LI3DoNC', caption: 'Distant lights define a city still becoming.'},
+      {url: 'https://aka.doubaocdn.com/s/3tj6ooPG9f', caption: 'Travel leaves traces that the camera tries to hold.'},
+      {url: 'https://aka.doubaocdn.com/s/WihFfm4zPq', caption: 'Every arrival is also a kind of departure.'},
+      {url: 'https://aka.doubaocdn.com/s/FiuOf5zCoq', caption: 'The Chrysler Building stands like a needle sewing the sky.'},
+      {url: 'https://aka.doubaocdn.com/s/2UAVP2GHLR', caption: 'Somewhere between here and elsewhere, a staircase frames the city below.'},
+      {url: 'https://aka.doubaocdn.com/s/v0Y19QoMod', caption: 'Hong Kong harbor: density and distance framed in monochrome.'},
+      {url: 'https://aka.doubaocdn.com/s/l93yEEHeSH', caption: 'Vertical living stacks upward, a bus passes at ground level.'},
+      {url: 'https://aka.doubaocdn.com/s/FMvOxsAOte', caption: 'A pagoda glimpsed through an ornate circle of stone.'},
+      {url: 'https://aka.doubaocdn.com/s/wxDvVkPHlu', caption: 'A wooden pier reaches out to still water, a life ring waiting for summer to return.'},
+      {url: 'https://aka.doubaocdn.com/s/F7yf3kTxYM', caption: 'Bare trees stand by a mountain lake as two figures walk in opposite directions.'}
+    ],
+    featured: [23, 5, 14]
+  },
+  {
+    id: 'blue-hour',
+    name: '蓝调时刻',
+    nameEn: 'Blue Hour',
+    desc: '日落后的城市，蓝与橙的交界',
+    descEn: 'The hour when the sky hesitates between day and night.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/VaPegANsXv', caption: 'The sky holds its breath between day and night.'},
+      {url: 'https://aka.doubaocdn.com/s/MFEwsh8obE', caption: 'Blue hour descends, and the city finds its quiet voice.'},
+      {url: 'https://aka.doubaocdn.com/s/xjM6M0L6VB', caption: 'Last light lingers on the horizon like a promise.'},
+      {url: 'https://aka.doubaocdn.com/s/qBUYB5C8tP', caption: 'Dusk paints the sky in shades of forgetting.'},
+      {url: 'https://aka.doubaocdn.com/s/PHqBUvR8P4', caption: 'The city dims, and silhouettes take over.'},
+      {url: 'https://aka.doubaocdn.com/s/7JMqBblJlr', caption: 'A tree becomes calligraphy against the fading sky.'},
+      {url: 'https://aka.doubaocdn.com/s/w8u9uNrX7U', caption: 'Blue hour: the hour when everything becomes possible.'},
+      {url: 'https://aka.doubaocdn.com/s/KHUBeYtzhd', caption: 'The last warm window glows against the cooling dark.'},
+      {url: 'https://aka.doubaocdn.com/s/yyngiP6VPY', caption: 'Twilight settles like dust on the skyline.'},
+      {url: 'https://aka.doubaocdn.com/s/UH90DN8tJ3', caption: 'Between two lights, the sky refuses to choose.'},
+      {url: 'https://aka.doubaocdn.com/s/LUTcktwdAM', caption: 'Dusk is the city most honest hour.'},
+      {url: 'https://aka.doubaocdn.com/s/XUNzMYKQmV', caption: 'The horizon glows, and the day lets go.'},
+      {url: 'https://aka.doubaocdn.com/s/7zN5LjqWzv', caption: 'Silhouettes deepen as the blue intensifies.'},
+      {url: 'https://aka.doubaocdn.com/s/kWvxngcNZ1', caption: 'Night arrives slowly, one shade of blue at a time.'}
+    ],
+    featured: []
+  },
+  {
+    id: 'after-dark',
+    name: '不眠夜色',
+    nameEn: 'After Dark',
+    desc: '霓虹、灯光与城市入睡后的呼吸',
+    descEn: 'When the city exhales and neon becomes its only voice.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/yZGw59rLEj', caption: 'The city refuses to sleep, and neither does the light.'},
+      {url: 'https://aka.doubaocdn.com/s/D0E4fAf19l', caption: 'Neon bleeds into the wet pavement after midnight.'},
+      {url: 'https://aka.doubaocdn.com/s/nIKfmk7zGq', caption: 'A red overpass glows like a wound in the dark.'},
+      {url: 'https://aka.doubaocdn.com/s/By5qbA6AYj', caption: 'Christmas market lights warm the winter dark.'},
+      {url: 'https://aka.doubaocdn.com/s/H9jVOeVoRc', caption: 'The night market hums with a language of its own.'},
+      {url: 'https://aka.doubaocdn.com/s/ixBkePbfEI', caption: 'Hong Kong after dark: every sign is a confession.'},
+      {url: 'https://aka.doubaocdn.com/s/SIizoHId3n', caption: 'Streetlights carve islands out of the darkness.'},
+      {url: 'https://aka.doubaocdn.com/s/2gFhw107wt', caption: 'The city glows from within, long after the sun leaves.'},
+      {url: 'https://aka.doubaocdn.com/s/ETRilkUjqb', caption: 'Rain turns the street into a mirror of lights.'},
+      {url: 'https://aka.doubaocdn.com/s/aqPVzxyCPM', caption: 'A lone figure walks through a corridor of neon.'},
+      {url: 'https://aka.doubaocdn.com/s/diOdG3bc2e', caption: 'Shanghai Tower\u2019s glass curtain wall refracts sunlight through drifting mist, the Tyndall effect made visible.'},
+      {url: 'https://aka.doubaocdn.com/s/8zn6CFYCCF', caption: 'Christmas lights turn a winter plaza into a stage of borrowed warmth.'}
+    ],
+    featured: [2, 5, 4, 10]
+  },
+  {
+    id: 'quiet-days',
+    name: '日常微光',
+    nameEn: 'Quiet Days',
+    desc: '猫、湖畔、球场——生活里的安静角落',
+    descEn: 'Small stillnesses that hold the weight of a whole afternoon.',
+    photos: [
+      {url: 'https://aka.doubaocdn.com/s/I6PaDUwvRV', caption: 'A cat watches the world from its own time zone.'},
+      {url: 'https://aka.doubaocdn.com/s/MIlOqxdhJo', caption: 'Feline stillness teaches the camera patience.'},
+      {url: 'https://aka.doubaocdn.com/s/VCu5V3fWBu', caption: 'Whiskers and window light: a study in calm.'},
+      {url: 'https://aka.doubaocdn.com/s/KOiuNtfQEK', caption: 'The cat owns the afternoon, and we are merely guests.'},
+      {url: 'https://aka.doubaocdn.com/s/RlBV2MG8VG', caption: 'Eyes that have seen a thousand quiet afternoons.'},
+      {url: 'https://aka.doubaocdn.com/s/X92yTaFImi', caption: 'A basketball rests between games, full of potential energy.'},
+      {url: 'https://aka.doubaocdn.com/s/OUP1UkDBkk', caption: 'The court is empty, but the game continues in memory.'},
+      {url: 'https://aka.doubaocdn.com/s/l0zhgiWZC8', caption: 'Lakeside stillness, where the water holds the sky.'},
+      {url: 'https://aka.doubaocdn.com/s/AJsEZH1DbU', caption: 'A cat reaches upward, its shadow stretching like a question against the wall.'},
+      {url: 'https://aka.doubaocdn.com/s/qhJtGN66g4', caption: 'A moment of rest between two movements.'},
+      {url: 'https://aka.doubaocdn.com/s/SAW2g8CtXR', caption: 'Light falls softly on an ordinary afternoon.'},
+      {url: 'https://aka.doubaocdn.com/s/ra6BU3atZY', caption: 'The city exhales, and quiet fills the space.'},
+      {url: 'https://aka.doubaocdn.com/s/3KCXlRzm7r', caption: 'Small things noticed when the world slows down.'}
+    ],
+    featured: [1, 8]
+  }
+];
+
+// ===== Build Featured Strip =====
+const featuredScroll = document.getElementById('featured-scroll');
+let featuredCount = 0;
+categories.forEach(cat => {
+  cat.featured.forEach(idx => {
+    const photo = cat.photos[idx];
+    const item = document.createElement('div');
+    item.className = 'featured-item';
+    item.innerHTML = '<img src="' + photo.url + '" alt="" loading="lazy"><span class="feat-tag">' + cat.nameEn + '</span>';
+    item.addEventListener('click', () => openLightbox(cat.id, idx));
+    featuredScroll.appendChild(item);
+    featuredCount++;
+  });
+});
+document.getElementById('featured-count').textContent = featuredCount + ' photos';
+
+// ===== Build Category Tabs =====
+const catTabs = document.getElementById('cat-tabs');
+const allTab = document.createElement('button');
+allTab.className = 'cat-tab active';
+allTab.innerHTML = 'All';
+allTab.dataset.cat = 'all';
+allTab.addEventListener('click', () => filterCategory('all'));
+catTabs.appendChild(allTab);
+
+categories.forEach(cat => {
+  const tab = document.createElement('button');
+  tab.className = 'cat-tab';
+  tab.innerHTML = cat.nameEn + '<span class="tab-zh">' + cat.name + '</span>';
+  tab.dataset.cat = cat.id;
+  tab.addEventListener('click', () => filterCategory(cat.id));
+  catTabs.appendChild(tab);
+});
+
+// ===== Build Gallery =====
+const galleryContainer = document.getElementById('gallery-container');
+
+categories.forEach(cat => {
+  const section = document.createElement('div');
+  section.className = 'cat-section';
+  section.dataset.cat = cat.id;
+
+  const title = document.createElement('div');
+  title.className = 'cat-section-title';
+  title.innerHTML = cat.nameEn + '<span class="en">' + cat.name + '</span><span class="count">' + cat.photos.length + '</span>';
+  section.appendChild(title);
+
+  const subtitle = document.createElement('div');
+  subtitle.className = 'cat-section-subtitle';
+  subtitle.textContent = cat.descEn;
+  section.appendChild(subtitle);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  cat.photos.forEach((photo, idx) => {
+    const item = document.createElement('div');
+    item.className = 'grid-item';
+    item.dataset.cat = cat.id;
+    item.dataset.idx = idx;
+    item.innerHTML = '<img src="' + photo.url + '" alt="" loading="lazy">';
+    item.addEventListener('click', () => openLightbox(cat.id, idx));
+    grid.appendChild(item);
+  });
+
+  section.appendChild(grid);
+  galleryContainer.appendChild(section);
+});
+
+// ===== Category Filter =====
+function filterCategory(catId) {
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === catId);
+  });
+  document.querySelectorAll('.cat-section').forEach(sec => {
+    sec.style.display = (catId === 'all' || sec.dataset.cat === catId) ? '' : 'none';
+  });
+}
+
+// ===== Lightbox =====
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+const lbCaption = document.getElementById('lb-caption');
+let currentCat = null;
+let currentIdx = 0;
+
+function openLightbox(catId, idx) {
+  currentCat = categories.find(c => c.id === catId);
+  currentIdx = idx;
+  updateLightbox();
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateLightbox() {
+  const photo = currentCat.photos[currentIdx];
+  lbImg.src = photo.url;
+  lbCaption.innerHTML = '<div class="lb-caption-meta">' + currentCat.nameEn + ' / ' + currentCat.name + ' — ' + (currentIdx + 1) + ' / ' + currentCat.photos.length + '</div>';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function prevPhoto() {
+  currentIdx = (currentIdx - 1 + currentCat.photos.length) % currentCat.photos.length;
+  updateLightbox();
+}
+
+function nextPhoto() {
+  currentIdx = (currentIdx + 1) % currentCat.photos.length;
+  updateLightbox();
+}
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-prev').addEventListener('click', prevPhoto);
+document.getElementById('lb-next').addEventListener('click', nextPhoto);
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') prevPhoto();
+  if (e.key === 'ArrowRight') nextPhoto();
+});
+
+// ===== Nav Active State on Scroll =====
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => {
+    const top = sec.offsetTop - 100;
+    if (window.scrollY >= top) current = sec.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
